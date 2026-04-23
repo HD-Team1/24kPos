@@ -1,5 +1,8 @@
 package Pos.product;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 public class Product {
 	private long  productId;
 	public String productName;
