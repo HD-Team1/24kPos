@@ -5,6 +5,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import Pos.common.OrderStatus;
 import Pos.order.Order;
 import Pos.product.Product;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -296,17 +299,68 @@ public class PosMain {
 
             switch (choice) {
                 case "1":
-                   
                     System.out.println("상품관리");
                     break;
                 case "2":
                     System.out.println("재고관리");
                     break;
                 case "3":
-                    System.out.println("매출");
+                    System.out.println("매출: [1]일별 조회 [2]기간 조회");
+                    String choice2 = scanner.next();
+                    switch (choice2) {
+                    case "1":
+                    		System.out.println("조회를 원하는 달을 입력해주세요. (예: 5)");
+                    		int inputMonth = Integer.parseInt(scanner.next());
+                    		System.out.println("조회를 원하는 날짜를 입력해주세요. (예: 15)");
+                    		int inputDay = Integer.parseInt(scanner.next());
+                    		LocalDate inputDate = LocalDate.of(2026, inputMonth, inputDay);
+                    		List<Sale> sales = PosFileManager.loadSalesByDate(inputDate);
+                    		for (Sale sale : sales) {
+							System.out.println(sale.toString());
+						}
+                    		break;
+                    case "2":
+                    		System.out.println("(From)조회를 원하는 달을 입력해주세요. (예: 3)");
+                			int startMonth = Integer.parseInt(scanner.next());
+                			System.out.println("(From)조회를 원하는 날짜를 입력해주세요. (예: 2)");
+                			int startDay = Integer.parseInt(scanner.next());
+                			System.out.println("(To)조회를 원하는 달을 입력해주세요. (예: 5)");
+                    		int endMonth = Integer.parseInt(scanner.next());
+                    		System.out.println("(To)조회를 원하는 날짜를 입력해주세요. (예: 15)");
+                    		int endDay = Integer.parseInt(scanner.next());
+                    		LocalDate startDate = LocalDate.of(2026, startMonth, startDay);
+                    		LocalDate endDate = LocalDate.of(2026, endMonth, endDay);
+                    		List<Sale> salesPeriod = PosFileManager.loadSalesByPeriod(startDate, endDate);
+                    		BigDecimal sumPeriod = new BigDecimal(0);
+                    		for (Sale sale : salesPeriod) {
+                    			sumPeriod.add(sale.getTotalPrice());
+                    			System.out.println(sale.toString());
+                    		}
+                    		System.out.println("기간 내의 매출액 합산: " + sumPeriod);
+                    		break;
+                    	default:
+                    		System.out.println("잘못된 메뉴 선택입니다.");
+                    		break;
+                    }
                     break;
                 case "4":
-                    System.out.println("거래");
+                    System.out.println("거래: [1]거래요청 [2]거래내역 [3]거래취소");
+                    String choice3 = scanner.next();
+                    switch(choice3) {
+                    case "1":
+                    		// TODO: (여러 개?) 바코드 입력 받아서(바로 Product 로 들어올 것) Product[] 에 들어가고 그걸로 Sale 생성
+                    		break;
+                    case "2":
+                    		for (Sale sale : this.history) {
+								System.out.println(sale.toString());
+						}
+                    		break;
+                    case "3":
+                    		// TODO: 거래취소
+                    		break;
+                    default:
+                    		break;
+                    }
                     break;
                 default:
                     System.out.println("잘못된 메뉴 선택입니다.");
