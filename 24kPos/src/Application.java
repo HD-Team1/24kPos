@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import Pos.common.OrderStatus;
 import Pos.main.PosMain;
 import Pos.order.Order;
 import Pos.product.Product;
