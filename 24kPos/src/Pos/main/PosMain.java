@@ -10,6 +10,7 @@ import Pos.product.Product;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -185,8 +186,8 @@ public class PosMain {
         return removed;
     }
     
+    // 전체 판매 기록 조회
     public List<Sale> getHistory() {
-        // 전체 판매 기록 조회
         System.out.println("=======전체 판매 기록 조회=======");
 
         // 최신순 정렬
@@ -200,8 +201,8 @@ public class PosMain {
         return descHistory;
     }
     
+    // 특정 일자 판매 기록 조회
     public List<Sale> getHistoryByDate(LocalDate date) {
-        // 특정 날짜 판매 기록 조회
         System.out.printf("=======%d년 %d월 %d일 판매 기록 조회=======",
                 date.getYear(), date.getMonthValue(), date.getDayOfMonth());
 
@@ -215,11 +216,14 @@ public class PosMain {
         return result;
     }
 
+    // 월별/일별 판매 총액 조회
     public BigDecimal getSalesAmount(int month, int day) {
         if (month < 1 || month > 12 || day < 0 || day > 31) {
-        	// 예외처리 추가
+        	// 예외처리 추가 
             return null;
         }
+        
+        // day == 0일 경우 특정 월 조회, month&day값 둘 다 존재할 경우 특정 일자 조회
 
         System.out.printf(day == 0
                 ? "=======%d월 판매 총액 조회======="
@@ -233,6 +237,28 @@ public class PosMain {
                 .map(Sale::getTotalPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
+    
+    // 거래 취소
+	public boolean cancelSale(Sale sale) {
+		if (sale.getStatus() == Sale.saleStatus.CANCELED) {
+			// 이미 취소된 내역일 경우 false
+			System.out.println("이미 취소된 거래 내역입니다.");
+			return false;
+		}
+		
+		// 유통기한이 아직 지나지 않은 제품일 경우 재고 개수 복원
+		for (Product p : sale.products) {
+			if (p.expiredAt.isAfter(LocalDateTime.now())) {
+				p.setQuantity(p.getQuantity() + 1);
+			}
+		}
+
+		sale.setStatus(Sale.saleStatus.CANCELED);
+		
+		System.out.println("거래 취소가 완료되었습니다.");
+		
+		return true;
+	}
     
     public Product barcodeScan(Product product) {
     		return product;
