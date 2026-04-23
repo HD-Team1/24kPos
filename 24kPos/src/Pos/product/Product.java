@@ -19,6 +19,18 @@ public class Product implements Serializable{
 	    this.expiredAt = expiredAt;
 	}
 	
+	public long getProductId() {
+	    return productId;
+	}
+	
+	public String getProductName() {
+	    return productName;
+	}
+
+	public LocalDateTime getExpiredAt() {
+	    return expiredAt;
+	}
+	
 	public int getQuantity() {
 		return quantity;
 	}
@@ -31,5 +43,14 @@ public class Product implements Serializable{
 		return this.expiredAt.isBefore(LocalDateTime.now());
 	}
 	
-
+	@Override
+	public String toString() {
+	    return "Product{" +
+	            "id=" + productId +
+	            ", name='" + productName + '\'' +
+	            ", price=" + productPrice +
+	            ", expiredAt=" + expiredAt +
+	            ", quantity=" + quantity +
+	            '}';
+	}
 }

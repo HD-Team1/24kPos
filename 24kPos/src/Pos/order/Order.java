@@ -38,4 +38,7 @@ public class Order implements Serializable{
 	public int getOrderId() {
 		return this.orderId;
 	}
+	public Product[] getProducts() {
+	    return products;
+	}
 }
