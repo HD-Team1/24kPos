@@ -84,6 +84,147 @@ public class PosMain {
 		}
 	}
 	
+	
+	public Sale makeSale(Product[] requestedProducts) {
+		
+		Map<String, Integer> requestedMap = new HashMap<>();
+		
+		// 콜라, 콜라, 맥주와 같이 개별 품목 형식으로 요청이 들어오므로 먼저 HashMap형태로 변환함
+		for (Product p : requestedProducts) {
+		    requestedMap.put(p.productName,
+		            requestedMap.getOrDefault(p.productName, 0) + 1);
+		}
+		
+		// 실제 판매된 상품, 개수
+		Map<String, Integer> soldMap = new HashMap<>();
+
+	    // 상품명별로 판매 가능 여부 검사
+	    for (Map.Entry<String, Integer> entry : requestedMap.entrySet()) {
+	        String productName = entry.getKey();
+	        int requestedQuantity = entry.getValue();
+
+	        // 해당 상품 전체 재고 조회
+			// Product 정보가 유통기한별로 묶어서 저장돼있으므로 특정 상품에 해당하는 전체 재고를 가져옴
+	        Product[] stocks = Arrays.stream(products)
+	                .filter(prod -> prod != null)
+	                .filter(prod -> prod.productName.equals(productName))
+	                .toArray(Product[]::new);
+			
+			// 만료된 재고는 수량 변경
+			int expiredCount = 0;
+			for (Product stock : stocks) {
+			    if (stock.isExpired() && stock.getQuantity() > 0) {
+			        expiredCount += stock.getQuantity();
+			        stock.setQuantity(0);
+			    }
+			}
+			
+	        if (expiredCount > 0) {
+	            System.out.printf("유통기한 만료로 %s %d개를 폐기처리 했습니다.%n", productName, expiredCount);
+	        }
+			
+			// 현재 판매 가능한 재고 개수
+			int availableQuantity = Arrays.stream(stocks)
+			        .filter(stock -> !stock.isExpired())
+			        .mapToInt(Product::getQuantity)
+			        .sum();
+			
+			// 판매하려던 상품이 품절인 경우
+			if (availableQuantity < requestedQuantity) {
+				System.out.printf("%s이(가) 품절입니다. 현재 구매 가능한 개수는 %d개입니다.", productName, availableQuantity);
+				System.out.println("1. 품절 제외 나머지 구매하기 2. 구매 제품 다시 선택하기");
+				
+				int choice = sc.nextInt();
+				
+				if (choice == 1) {
+					soldMap.put(productName, availableQuantity);
+				}
+				else if (choice == 2) {
+					System.out.println("거래가 취소되었습니다.");
+					return null;
+				} else {
+					System.out.println("잘못된 입력입니다. 거래를 취소합니다.");
+					return null;
+				}
+			}
+			
+			soldMap.put(productName,  requestedQuantity);
+	    }
+	    
+	    // 재고 차감
+	    for (Map.Entry<String, Integer> entry : soldMap.entrySet()) {
+	    	String productName = entry.getKey();
+	        int saleQuantity = entry.getValue();
+
+	        if (saleQuantity <= 0) continue;
+
+	        Product[] stocks = Arrays.stream(products)
+	                .filter(prod -> prod != null)
+	                .filter(prod -> prod.productName.equals(productName))
+	                .filter(prod -> !prod.isExpired())
+	                .filter(prod -> prod.getQuantity() > 0)
+	                .sorted(Comparator.comparing(prod -> prod.expiredAt))
+	                .toArray(Product[]::new);
+
+	        int remain = saleQuantity;
+
+	        for (Product stock : stocks) {
+	            if (remain == 0) break;
+
+	            int stockQty = stock.getQuantity();
+
+	            if (stockQty <= remain) {
+	                stock.setQuantity(0);
+	                remain -= stockQty;
+	            } else {
+	                stock.setQuantity(stockQty - remain);
+	                remain = 0;
+	            }
+	        }
+
+	        // 재고 부족 메시지
+	        int leftQuantity = Arrays.stream(products)
+	                .filter(prod -> prod != null)
+	                .filter(prod -> prod.productName.equals(productName))
+	                .filter(prod -> !prod.isExpired())
+	                .mapToInt(Product::getQuantity)
+	                .sum();
+
+	        if (leftQuantity <= 3) {
+	            System.out.printf("[재고 부족] %s의 남은 재고는 %d개입니다.%n", productName, leftQuantity);
+	        }
+	
+	    }
+
+	    // 실제로 판매된 개수
+	    int totalSoldCount = soldMap.values().stream()
+	            .mapToInt(Integer::intValue)
+	            .sum();
+	    
+	    // soldMap 기준으로 Sale용 Product[] 생성
+	    Product[] soldProducts = new Product[totalSoldCount];
+	    int idx = 0;
+
+	    for (Map.Entry<String, Integer> entry : soldMap.entrySet()) {
+	        String productName = entry.getKey();
+	        int soldQuantity = entry.getValue();
+
+	        // soldMap에서 Product 배열로 변환하는 과정에서 사용되는 임시값
+	        Product sample = Arrays.stream(requestedProducts)
+	                .filter(p -> p != null)
+	                .filter(p -> p.productName.equals(productName))
+	                .findFirst()
+	                .orElse(null);
+
+	        for (int i = 0; i < soldQuantity; i++) {
+	            soldProducts[idx++] = sample;
+	        }
+	    }
+		
+		// 거래 시간과 총 금액은 Sale 생성자 안에서 계산됨
+		return new Sale(soldProducts, Sale.saleStatus.COMPLETED);
+	}
+	
 	public boolean cancelSale(Sale sale) {
 		if (sale.getStatus() == Sale.saleStatus.CANCELED) {
 			// 이미 취소된 내역일 경우 false
