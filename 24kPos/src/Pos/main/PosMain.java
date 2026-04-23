@@ -258,6 +258,10 @@ public class PosMain {
         return removed;
     }
     
+    public Product barcodeScan(Product product) {
+    		return product;
+    }
+    
     public void run() {
         Scanner scanner = new Scanner(System.in);
         
@@ -348,7 +352,13 @@ public class PosMain {
                     String choice3 = scanner.next();
                     switch(choice3) {
                     case "1":
-                    		// TODO: (여러 개?) 바코드 입력 받아서(바로 Product 로 들어올 것) Product[] 에 들어가고 그걸로 Sale 생성
+                    		Product barcode = null;
+                    		List<Product> products = new ArrayList<Product>();
+                    		do {
+                    				// TODO: (코드 상에서) 여러 품목 바코드찍기 // 그런데 현실이랑 비슷한건 null 될때까지 받는것보다 원하는만큼 받은다음에 버튼 누르면 완료인데 ...
+								barcode = this.barcodeScan(null);
+								products.add(barcode);
+							} while (barcode != null);
                     		break;
                     case "2":
                     		for (Sale sale : this.history) {
@@ -356,7 +366,11 @@ public class PosMain {
 						}
                     		break;
                     case "3":
-                    		// TODO: 거래취소
+                    		System.out.println("거래취소를 원하는 거래의 ID를 입력해주세요.");
+                    		String inputId = scanner.next();
+                    		for (Sale sale : this.history) {
+                    			if (inputId.equals(sale.getSaleId())) this.history.remove(sale);
+                    		}
                     		break;
                     default:
                     		break;
