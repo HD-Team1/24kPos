@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import Pos.common.OrderStatus;
 import Pos.main.PosMain;
 import Pos.order.Order;
-import Pos.order.Order.orderStatus;
 import Pos.product.Product;
 import Pos.sale.Sale;
 import Pos.sale.Sale.saleStatus;
@@ -54,13 +54,13 @@ public class Application {
         Order order1 = new Order(
                
                 new Product[]{cola1, water1},
-                orderStatus.REQUESTED
+                OrderStatus.REQUESTED
         );
 
         Order order2 = new Order(
                 
                 new Product[]{cola2},
-                orderStatus.COMPLETED
+                OrderStatus.COMPLETED
         );
 
         Sale sale1 = new Sale(
@@ -75,9 +75,6 @@ public class Application {
                 saleStatus.CANCELED
         );
 
-        pos.getOrders().add(order1);
-        pos.getOrders().add(order2);
-
         pos.getHistory().add(sale1);
         pos.getHistory().add(sale2);
 
@@ -88,7 +85,6 @@ public class Application {
         printPosData(pos);
 
         pos.getProducts().clear();
-        pos.getOrders().clear();
         pos.getHistory().clear();
 
         System.out.println("\n=== 메모리 초기화 후 ===");
