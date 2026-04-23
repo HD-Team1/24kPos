@@ -215,7 +215,24 @@ public class PosMain {
         return result;
     }
 
-    
+    public BigDecimal getSalesAmount(int month, int day) {
+        if (month < 1 || month > 12 || day < 0 || day > 31) {
+        	// 예외처리 추가
+            return null;
+        }
+
+        System.out.printf(day == 0
+                ? "=======%d월 판매 총액 조회======="
+                : "=======%d월 %d일 판매 총액 조회=======",
+                month, day);
+
+        return history.stream()
+                .filter(s -> s.getStatus() == Sale.saleStatus.COMPLETED)
+                .filter(s -> s.soldAt.getMonthValue() == month)
+                .filter(s -> day == 0 || s.soldAt.getDayOfMonth() == day)
+                .map(Sale::getTotalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
     
     public Product barcodeScan(Product product) {
     		return product;
