@@ -283,7 +283,7 @@ public class PosMain {
         
         //POS기 가동 -> 메인 메뉴 
         while (true) {
-            System.out.println("\n[1]판매 [2]재고 [3]발주 [4]매출 [5]폐기 [0]종료");
+            System.out.println("\n[1]상품관리 [2]재고관리 [3]매출 [4]거래 [0]종료");
             System.out.print("메뉴 선택: ");
             String choice = scanner.next();
             
@@ -296,29 +296,17 @@ public class PosMain {
 
             switch (choice) {
                 case "1":
-                    // 판매 처리
-                    // 요구사항: 바코드 스캔, 유통기한/재고 검사, 카드 결제, FIFO 차감 등
-                    System.out.println("판매 처리 모드 진입");
+                   
+                    System.out.println("상품관리");
                     break;
                 case "2":
-                    // 재고 관리 로직 호출
-                    // 요구사항: 전체 재고 조회, 품절 표시, 임계값 알림 등
-                    System.out.println("재고 조회 및 관리 모드 진입");
+                    System.out.println("재고관리");
                     break;
                 case "3":
-                    // 발주 관리 로직 호출
-                    // 요구사항: 발주 기록, 발주 취소(상태 변경) 등
-                    System.out.println("상품 발주 및 취소 모드 진입");
+                    System.out.println("매출");
                     break;
                 case "4":
-                    // 매출 관리 로직 호출
-                    // 요구사항: 일별/월별 매출 조회 등
-                    System.out.println("매출 현황 조회 모드 진입");
-                    break;
-                case "5":
-                    // 상품 폐기 로직 호출
-                    // 요구사항: 폐기 요청 시 재고 차감, 유통기한 경과 대상 분류 등
-                    System.out.println("상품 폐기 처리 모드 진입");
+                    System.out.println("거래");
                     break;
                 default:
                     System.out.println("잘못된 메뉴 선택입니다.");
