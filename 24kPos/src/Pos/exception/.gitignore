@@ -1,0 +1,9 @@
+/SoldOutException.class
+/OrderException.class
+/OrderNotFoundException.class
+/ProductException.class
+/ProductNotFoundException.class
+/InvalidBarcodeException.class
+/SaleException.class
+/OutOfStockException.class
+/StockException.class
