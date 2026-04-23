@@ -7,7 +7,7 @@ import Pos.product.Product;
 import java.time.LocalDateTime;
 
 public class Order {
-	public long orderId;
+	public int orderId;
 	private Product[] products;
 	private LocalDateTime orderedAt;
 	public enum orderStatus {
