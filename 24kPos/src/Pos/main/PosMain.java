@@ -19,6 +19,21 @@ public class PosMain {
     private List<Order> orders;
     
     
+	// 비밀번호 설정
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    // 로그인
+    public boolean login(String inputPassword) {
+        if (this.password == null) {
+            System.out.println("비밀번호가 설정되지 않았습니다.");
+            return false;
+        }
+
+        return this.password.equals(inputPassword);
+    }
+    
 
     // 싱글톤 생성자
     private PosMain() {
