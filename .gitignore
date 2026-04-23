@@ -4,6 +4,11 @@
 .project
 .settings/
 
+24kPos/.metadata/
+24kPos/bin/
+24kPos/.classpath
+24kPos/.project
+24kPos/.settings/
 # Build output
 bin/
 build/
