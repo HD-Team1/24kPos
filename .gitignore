@@ -1,0 +1,29 @@
+# Eclipse
+.metadata/
+.classpath
+.project
+.settings/
+
+# Build output
+bin/
+build/
+out/
+target/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IntelliJ (혹시 섞일 경우 대비)
+.idea/
+*.iml
+
+# VSCode
+.vscode/
+
+# 기타
+*.tmp
+*.swp
