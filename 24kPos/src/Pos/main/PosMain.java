@@ -57,52 +57,7 @@ public class PosMain {
         }
     }
     
-    
-// =================================== 아래는 main용 코드 ===================================
-//    public static void main(String[] args) {
-//        PosMain pos = new PosMain();
-//        
-//        // [추가] 자동 작업 스레드: 시스템이 돌아가는 와중에 경쟁을 유발합니다.
-//        Thread autoWorker = new Thread(() -> {
-//            while (true) {
-//                try {
-//                    Thread.sleep(5000);
-//                    Order[] currentOrders = pos.getOrders();
-//                    if (currentOrders.length > 0) {
-//                        pos.updateStatus(currentOrders[0], OrderStatus.PROCESSING);
-//                    }
-//                } catch (InterruptedException e) { break; }
-//            }
-//        }, "AUTO_WORKER");
-//        autoWorker.setDaemon(true);
-//        autoWorker.start();
-//
-//        // [인터랙티브 모드]
-//        Scanner scanner = new Scanner(System.in);
-//        System.out.println("=== POS 시스템 (멀티스레드 경쟁 모드) ===");
-//        
-//        while (scanner.hasNext()) {
-//            String cmd = scanner.next();
-//            if (cmd.equals("exit")) break;
-//            
-//            try {
-//                switch (cmd) {
-//                    case "create": pos.makeOrder(new Product[0]); break;
-//                    case "list": for (Order o : pos.getOrders()) System.out.println(o); break;
-//                    case "cancel": pos.cancelOrder(findOrder(pos, scanner.nextInt())); break;
-//                    case "process": pos.updateStatus(findOrder(pos, scanner.nextInt()), OrderStatus.PROCESSING); break;
-//                    case "complete": pos.updateStatus(findOrder(pos, scanner.nextInt()), OrderStatus.COMPLETED); break;
-//                }
-//            } catch (Exception e) { System.out.println("명령어 입력 오류!"); }
-//        }
-//        scanner.close();
-//    }
 
-//    private static Order findOrder(PosMain pos, int id) {
-//        for (Order o : pos.getOrders()) if (o.getOrderId() == id) return o;
-//        return null;
-//    }
-//    =========================================================================================================
     private static PosMain instance = new PosMain();
     private String password;
     
