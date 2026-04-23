@@ -251,6 +251,48 @@ public class PosMain {
     		requestedMap.put(p.productName, requestedMap.getOrDefault(p.productName, 0) + 1);
     	}
     	
+    	// 상품별로 판매 가능 여부 검사 및 유통기한 만료, 품절 관련 처리
+    	Map<String, Integer> soldMap = checkAvailability(requestedMap);
+
+    	// 재고 차감
+    	deductStock(soldMap);
+
+    	// 실제로 판매된 개수
+    	int totalSoldCount = soldMap.values().stream()
+    			.mapToInt(Integer::intValue)
+    			.sum();
+
+    	// soldMap 기준으로 Sale에 전달할 상품 목록 생성
+    	Product[] soldProducts = new Product[totalSoldCount];
+    	int idx = 0;
+
+    	for (Map.Entry<String, Integer> entry : soldMap.entrySet()) {
+    		String productName = entry.getKey();
+    		int soldQuantity = entry.getValue();
+
+    		if (soldQuantity <= 0) continue;
+
+    		// 요청 상품 목록에서 해당 상품의 샘플 Product를 찾음
+    		Product sample = null;
+    		for (Product p : requestedProducts) {
+    			if (p != null && p.productName.equals(productName)) {
+    				sample = p;
+    				break;
+    			}
+    		}
+
+    		if (sample == null) continue;
+
+    		for (int i = 0; i < soldQuantity; i++) {
+    			soldProducts[idx++] = sample;
+    		}
+    	}
+
+    	// 거래 시간과 총 금액은 Sale 생성자 안에서 계산됨
+    	return new Sale(soldProducts, Sale.saleStatus.COMPLETED);
+    }
+    
+    private Map<String, Integer> checkAvailability(Map<String, Integer> requestedMap) {
     	// 실제 판매된 상품, 개수
     	Map<String, Integer> soldMap = new HashMap<>();
 
@@ -307,44 +349,59 @@ public class PosMain {
     			soldMap.put(productName, requestedQuantity);
     		}
     	}
-
-    	// 재고 차감
+    	
+    	return soldMap;
+    }
+    
+    // 재고 차감
+    private void deductStock(Map<String, Integer> soldMap) {
+    	// 상품별 처리
     	for (Map.Entry<String, Integer> entry : soldMap.entrySet()) {
     		String productName = entry.getKey();
     		int saleQuantity = entry.getValue();
 
     		if (saleQuantity <= 0) continue;
 
+    		// 상품명이 동일한 물품의 전체 재고를 가져옴
     		List<Product> stocks = products.get(productName);
+    		// 상품 자체가 존재하지 않을 경우
     		if (stocks == null) continue;
 
+    		// 판매 가능한 제품 묶음
+    		// Product는 제품&유통기한별로 저장되기 때문
     		List<Product> availableStocks = new ArrayList<>();
 
+    		// 유통기한이 지나지 않았고 개수가 1개 이상일 경우 판매 가능 리스트에 추가
     		for (Product stock : stocks) {
     			if (stock != null && !stock.isExpired() && stock.getQuantity() > 0) {
     				availableStocks.add(stock);
     			}
     		}
 
+    		// 선입선출을 위해 유통기한 오름차순으로 정렬
     		availableStocks.sort(Comparator.comparing(prod -> prod.expiredAt));
 
+    		// 아직 판매 처리중인 수량
     		int remain = saleQuantity;
 
     		for (Product stock : availableStocks) {
-    			if (remain == 0) break;
+    			if (remain == 0) break; // 모든 상품 처리가 완료된 경우
 
     			int stockQty = stock.getQuantity();
 
-    			if (stockQty <= remain) {
+    			if (stockQty <= remain) { 
+    				// 재고 수량이 판매해야 하는 수량보다 적을 경우
+    				// 재고 수량 0으로 세팅, 판매하지 못한 수량은 remain에 저장 후 다음 묶음에서 처리
     				stock.setQuantity(0);
     				remain -= stockQty;
     			} else {
+    				// 재고 수량이 아직 남아있을 경우
     				stock.setQuantity(stockQty - remain);
     				remain = 0;
     			}
     		}
 
-    		// 재고 부족 메시지
+    		// 남은 재고 계산 후 3개 이하일 경우 재고 부족 메세지 출력
     		int leftQuantity = 0;
     		for (Product stock : stocks) {
     			if (stock != null && !stock.isExpired()) {
@@ -356,40 +413,6 @@ public class PosMain {
     			System.out.printf("[재고 부족] %s의 남은 재고는 %d개입니다.%n", productName, leftQuantity);
     		}
     	}
-
-    	// 실제로 판매된 개수
-    	int totalSoldCount = soldMap.values().stream()
-    			.mapToInt(Integer::intValue)
-    			.sum();
-
-    	// soldMap 기준으로 Sale에 전달할 상품 목록 생성
-    	Product[] soldProducts = new Product[totalSoldCount];
-    	int idx = 0;
-
-    	for (Map.Entry<String, Integer> entry : soldMap.entrySet()) {
-    		String productName = entry.getKey();
-    		int soldQuantity = entry.getValue();
-
-    		if (soldQuantity <= 0) continue;
-
-    		// 요청 상품 목록에서 해당 상품의 샘플 Product를 찾음
-    		Product sample = null;
-    		for (Product p : requestedProducts) {
-    			if (p != null && p.productName.equals(productName)) {
-    				sample = p;
-    				break;
-    			}
-    		}
-
-    		if (sample == null) continue;
-
-    		for (int i = 0; i < soldQuantity; i++) {
-    			soldProducts[idx++] = sample;
-    		}
-    	}
-
-    	// 거래 시간과 총 금액은 Sale 생성자 안에서 계산됨
-    	return new Sale(soldProducts, Sale.saleStatus.COMPLETED);
     }
     
     // 거래 취소
