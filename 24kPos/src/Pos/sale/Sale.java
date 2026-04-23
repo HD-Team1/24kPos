@@ -4,12 +4,13 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 
 import Pos.product.Product;
 
 public class Sale implements Comparable<Sale>, Serializable {
 	private int saleId;
-	public Product[] products;
+	public List<Product> products;
 	public LocalDateTime soldAt;
 	private BigDecimal totalPrice;
 	public enum saleStatus {
@@ -17,12 +18,24 @@ public class Sale implements Comparable<Sale>, Serializable {
 	}
 	private saleStatus status;
 	
-	public Sale(Product[] products, saleStatus status) {
-		this.products = products;
-		this.soldAt = LocalDateTime.now();
-		this.totalPrice = calculateTotalPrice(products);
-		this.status = status;
-	}
+    public Sale(List<Product> products, saleStatus status) {
+    	LocalDateTime now = LocalDateTime.now();
+
+        this.products = products;
+        this.soldAt = now;
+        this.totalPrice = calculateTotalPrice(products);
+        this.status = status;
+
+        // saleId 생성
+        this.saleId = Integer.parseInt(String.format("%02d%02d%03d",
+                now.getMonthValue(),
+                now.getDayOfMonth(),
+                Math.abs((Integer.toString(now.getHour())
+                        + Integer.toString(now.getMinute())
+                        + Integer.toString(now.getSecond())
+                        + Integer.toString(now.getNano())).hashCode() % 100000)
+        ));
+    }
 	
 	public saleStatus getStatus() {
 		return this.status;
@@ -35,29 +48,30 @@ public class Sale implements Comparable<Sale>, Serializable {
 		return this.totalPrice;
 	}
 	
-	@Override
-	public String toString() {
-		return "[" + saleId + " | " + soldAt + " | " + status +
-	            " | 판매 제품 : " + Arrays.toString(products) +
-	            " | 총액 : " + totalPrice +
-	            "원 ]";
-	}
+    @Override
+    public String toString() {
+        return "[" + saleId + " | " + soldAt + " | " + status +
+                " | 판매 제품 : " + products +
+                " | 총액 : " + totalPrice +
+                "원 ]";
+    }
 	
 	@Override
 	public int compareTo(Sale sale) {
 		return this.soldAt.compareTo(sale.soldAt);
 	}
 	
-	public BigDecimal calculateTotalPrice(Product[] products) {
-		return Arrays.stream(products)
-				.filter(p -> p != null)
-	            .map(p -> p.productPrice)
+	public BigDecimal calculateTotalPrice(List<Product> products) {
+	    return products.stream()
+	            .filter(p -> p != null)
+	            .map(p -> p.productPrice.multiply(BigDecimal.valueOf(p.getQuantity())))
 	            .reduce(BigDecimal.ZERO, BigDecimal::add);
+	}
 
 	public int getSaleId() {
 		return this.saleId;
 	}
-	public Product[] getProducts() {
+	public List<Product> getProducts() {
 	    return products;
 	}
 }
