@@ -2,6 +2,7 @@ package Pos.order;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import Pos.common.OrderStatus;
@@ -11,12 +12,12 @@ import java.time.LocalDateTime;
 
 public class Order implements Serializable{
 	public int orderId;
-	private Product[] products;
+	private List<Product> products;
 	private LocalDateTime orderedAt;
 
 	private OrderStatus status;
 	
-	public Order(Product[] products, OrderStatus status) {
+	public Order(List<Product> products, OrderStatus status) {
 		this.orderedAt = LocalDateTime.now();
 		this.orderId = Integer.parseInt(String.format("%02d%02d%03d", 
 					this.orderedAt.getMonthValue(),
@@ -42,7 +43,7 @@ public class Order implements Serializable{
     public String toString() {
         return "주문ID=" + orderId +
                 " | 상태=" + status +
-                " | 상품수=" + (products == null ? 0 : products.length) +
+                " | 상품수=" + (products == null ? 0 : products.size()) +
                 " | 주문시간=" + orderedAt;
     }
     
@@ -50,7 +51,7 @@ public class Order implements Serializable{
 		return this.orderId;
 	}
 
-	public Product[] getProducts() {
+	public List<Product> getProducts() {
 	    return products;
 	}
 }
