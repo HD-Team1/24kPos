@@ -71,11 +71,6 @@ public class PosMain {
 
         return this.password.equals(inputPassword);
     }
-    
-
-    public List<Sale> getHistory() {
-        return history;
-    }
    
     public Map<String, List<Product>> getProducts() {
         return products;
@@ -189,6 +184,39 @@ public class PosMain {
 
         return removed;
     }
+    
+//	public Sale[] getHistory() {
+//		// 전체 판매 기록 조회
+//		System.out.println("=======전체 판매 기록 조회=======");
+//
+//		// 최신순으로 정렬해서 보여주기 위한 복사본 생성
+//		Sale[] descHistory = Arrays.copyOf(history, history.length);
+//		Arrays.sort(descHistory, Comparator.reverseOrder());
+//		
+//		for (Sale s : descHistory) {
+//			System.out.println(s.toString());
+//		}
+//		
+//		return descHistory;
+//	}
+    
+    public List<Sale> getHistory() {
+        // 전체 판매 기록 조회
+        System.out.println("=======전체 판매 기록 조회=======");
+
+        // 복사본 생성 (원본 보호)
+        List<Sale> descHistory = new ArrayList<>(history);
+
+        // 최신순 정렬
+        descHistory.sort(Comparator.reverseOrder());
+
+        for (Sale s : descHistory) {
+            System.out.println(s);
+        }
+
+        return descHistory;
+    }
+    
     
     public Product barcodeScan(Product product) {
     		return product;
