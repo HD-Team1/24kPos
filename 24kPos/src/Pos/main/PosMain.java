@@ -83,6 +83,27 @@ public class PosMain {
 			return null;
 		}
 	}
+	
+	public boolean cancelSale(Sale sale) {
+		if (sale.getStatus() == Sale.saleStatus.CANCELED) {
+			// 이미 취소된 내역일 경우 false
+			System.out.println("이미 취소된 거래 내역입니다.");
+			return false;
+		}
+		
+		// 유통기한이 아직 지나지 않은 제품일 경우 재고 개수 복원
+		for (Product p : sale.products) {
+			if (p.expiredAt.isBefore(now)) {
+				p.setQuantity(p.getQuantity() + 1);
+			}
+		}
+		
+		sale.setStatus(Sale.saleStatus.CANCELED);
+		
+		System.out.println("거래 취소가 완료되었습니다.");
+		
+		return true;
+	}
 
 	
 	public static void main(String[] args) {
