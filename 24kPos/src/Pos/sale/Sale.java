@@ -1,12 +1,13 @@
 package Pos.sale;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
 import Pos.product.Product;
 
-public class Sale implements Comparable<Sale> {
+public class Sale implements Comparable<Sale>, Serializable {
 	private int saleId;
 	public Product[] products;
 	public LocalDateTime soldAt;
@@ -52,5 +53,11 @@ public class Sale implements Comparable<Sale> {
 				.filter(p -> p != null)
 	            .map(p -> p.productPrice)
 	            .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+	public int getSaleId() {
+		return this.saleId;
+	}
+	public Product[] getProducts() {
+	    return products;
 	}
 }
