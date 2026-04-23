@@ -30,5 +30,12 @@ public class Product {
 		return this.expiredAt.isBefore(LocalDateTime.now());
 	}
 	
+	@Override
+	public String toString() {
+	    return "[상품명: " + productName +
+	            ", 가격: " + productPrice +
+	            ", 유통기한: " + expiredAt +
+	            ", 수량: " + quantity + "]";
+	}
 
 }
