@@ -29,15 +29,25 @@ public class Sale implements Comparable<Sale>, Serializable {
 	}
 	public void setStatus(saleStatus status) {
 		this.status = status;
+	}	
+
+	public int getSaleId() {
+		return this.saleId;
 	}
-	/*
+	public Product[] getProducts() {
+	    return products;
+	}
+	public BigDecimal getTotalPrice() {
+		return this.totalPrice;
+	}
+	
 	@Override
 	public String toString() {
 		return "[" + saleId + " | " + soldAt + " | " + status +
 	            " | 판매 제품 : " + Arrays.toString(products) +
 	            " | 총액 : " + totalPrice +
 	            "원 ]";
-	}*/
+	}
 	
 	@Override
 	public int compareTo(Sale sale) {
@@ -49,28 +59,6 @@ public class Sale implements Comparable<Sale>, Serializable {
 				.filter(p -> p != null)
 	            .map(p -> p.productPrice)
 	            .reduce(BigDecimal.ZERO, BigDecimal::add);
-	}
-
-	public int getSaleId() {
-		return this.saleId;
-	}
-	public Product[] getProducts() {
-	    return products;
-	}
-	public BigDecimal getTotalPrice() {
-		return this.totalPrice;
-	}
-	@Override
-	public String toString() {
-		String string = "거래ID=" + this.saleId +
-						" | 상태=" + this.status +
-						"\n거래상품=\n";
-		for (Product product : this.products) {
-			string += product.toString();
-		}
-		string += "\n총거래액=" + this.totalPrice +
-				" | 거래일시=" + this.soldAt;
-		return string;
 	}
 	
 }
