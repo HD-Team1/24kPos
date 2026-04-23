@@ -60,4 +60,20 @@ public class Sale implements Comparable<Sale>, Serializable {
 	public Product[] getProducts() {
 	    return products;
 	}
+	public BigDecimal getTotalPrice() {
+		return this.totalPrice;
+	}
+	@Override
+	public String toString() {
+		String string = "거래ID=" + this.saleId +
+						" | 상태=" + this.status +
+						"\n거래상품=\n";
+		for (Product product : this.products) {
+			string += product.toString();
+		}
+		string += "\n총거래액=" + this.totalPrice +
+				" | 거래일시=" + this.soldAt;
+		return string;
+	}
+	
 }
