@@ -29,4 +29,7 @@ public class Sale implements Serializable{
 	public int getSaleId() {
 		return this.saleId;
 	}
+	public Product[] getProducts() {
+	    return products;
+	}
 }
