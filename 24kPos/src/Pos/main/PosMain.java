@@ -185,29 +185,12 @@ public class PosMain {
         return removed;
     }
     
-//	public Sale[] getHistory() {
-//		// 전체 판매 기록 조회
-//		System.out.println("=======전체 판매 기록 조회=======");
-//
-//		// 최신순으로 정렬해서 보여주기 위한 복사본 생성
-//		Sale[] descHistory = Arrays.copyOf(history, history.length);
-//		Arrays.sort(descHistory, Comparator.reverseOrder());
-//		
-//		for (Sale s : descHistory) {
-//			System.out.println(s.toString());
-//		}
-//		
-//		return descHistory;
-//	}
-    
     public List<Sale> getHistory() {
         // 전체 판매 기록 조회
         System.out.println("=======전체 판매 기록 조회=======");
 
-        // 복사본 생성 (원본 보호)
-        List<Sale> descHistory = new ArrayList<>(history);
-
         // 최신순 정렬
+        List<Sale> descHistory = new ArrayList<>(history);
         descHistory.sort(Comparator.reverseOrder());
 
         for (Sale s : descHistory) {
@@ -216,6 +199,22 @@ public class PosMain {
 
         return descHistory;
     }
+    
+    public List<Sale> getHistoryByDate(LocalDate date) {
+        // 특정 날짜 판매 기록 조회
+        System.out.printf("=======%d년 %d월 %d일 판매 기록 조회=======",
+                date.getYear(), date.getMonthValue(), date.getDayOfMonth());
+
+        List<Sale> result = history.stream()
+                .filter(s -> s.soldAt.toLocalDate().equals(date))
+                .sorted(Comparator.reverseOrder())
+                .toList();
+
+        result.forEach(System.out::println);
+
+        return result;
+    }
+
     
     
     public Product barcodeScan(Product product) {
