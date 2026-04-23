@@ -59,8 +59,9 @@ public class PosMain {
     
     
 // =================================== 아래는 main용 코드 ===================================
-//    public static void main(String[] args) {
-//        PosMain pos = new PosMain();
+    public static void main(String[] args) {
+        PosMain pos = new PosMain();
+        pos.run();
 //        
 //        // [추가] 자동 작업 스레드: 시스템이 돌아가는 와중에 경쟁을 유발합니다.
 //        Thread autoWorker = new Thread(() -> {
@@ -101,7 +102,7 @@ public class PosMain {
 //    private static Order findOrder(PosMain pos, int id) {
 //        for (Order o : pos.getOrders()) if (o.getOrderId() == id) return o;
 //        return null;
-//    }
+    }
 //    =========================================================================================================
     private static PosMain instance = new PosMain();
     private String password;
@@ -252,5 +253,78 @@ public class PosMain {
         }
 
         return removed;
+    }
+    
+    public void run() {
+        Scanner scanner = new Scanner(System.in);
+        
+        // 초기 설정 
+        setPassword("12345678");
+        
+       
+        // [전원 관리] 포스기를 켜면 데이터 로드 
+        load();
+        
+        // 로그인 절차
+        while (true) {
+        	System.out.println("====================================");
+            System.out.print("   비밀번호를 입력하세요:    ");
+            
+            if (login(scanner.next())) {
+                System.out.println("로그인 성공!");
+                break;
+            }
+            System.out.println("비밀번호가 틀렸습니다.");
+        }
+        
+        System.out.println("====================================");
+        System.out.println("   편의점 POS 시스템을 시작합니다.   ");
+        System.out.println("====================================");
+        
+        //POS기 가동 -> 메인 메뉴 
+        while (true) {
+            System.out.println("\n[1]판매 [2]재고 [3]발주 [4]매출 [5]폐기 [0]종료");
+            System.out.print("메뉴 선택: ");
+            String choice = scanner.next();
+            
+            // 0. 종료 시 메모리 데이터를 파일로 즉시 저장
+            if (choice.equals("0")) {
+                save();
+                System.out.println("데이터를 저장하고 시스템을 종료합니다.");
+                break;
+            }
+
+            switch (choice) {
+                case "1":
+                    // 판매 처리
+                    // 요구사항: 바코드 스캔, 유통기한/재고 검사, 카드 결제, FIFO 차감 등
+                    System.out.println("판매 처리 모드 진입");
+                    break;
+                case "2":
+                    // 재고 관리 로직 호출
+                    // 요구사항: 전체 재고 조회, 품절 표시, 임계값 알림 등
+                    System.out.println("재고 조회 및 관리 모드 진입");
+                    break;
+                case "3":
+                    // 발주 관리 로직 호출
+                    // 요구사항: 발주 기록, 발주 취소(상태 변경) 등
+                    System.out.println("상품 발주 및 취소 모드 진입");
+                    break;
+                case "4":
+                    // 매출 관리 로직 호출
+                    // 요구사항: 일별/월별 매출 조회 등
+                    System.out.println("매출 현황 조회 모드 진입");
+                    break;
+                case "5":
+                    // 상품 폐기 로직 호출
+                    // 요구사항: 폐기 요청 시 재고 차감, 유통기한 경과 대상 분류 등
+                    System.out.println("상품 폐기 처리 모드 진입");
+                    break;
+                default:
+                    System.out.println("잘못된 메뉴 선택입니다.");
+                    break;
+            }
+        }
+        scanner.close();
     }
 }
