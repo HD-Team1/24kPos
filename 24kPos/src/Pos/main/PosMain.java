@@ -5,6 +5,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import Pos.common.OrderStatus;
 import Pos.exception.OrderNotFoundException;
 import Pos.exception.PosException;
+import Pos.exception.ProductNotFoundException;
 import Pos.order.Order;
 import Pos.product.Product;
 
@@ -222,7 +223,7 @@ public class PosMain {
     public BigDecimal getSalesAmount(int month, int day) {
         if (month < 1 || month > 12 || day < 0 || day > 31) {
         	// 예외처리 추가 
-            return null;
+        	throw new PosException("INVALID_DATE", "유효하지 않은 날짜 입력입니다. month=" + month + ", day=" + day);
         }
         
         // day == 0일 경우 특정 월 조회, month&day값 둘 다 존재할 경우 특정 일자 조회
@@ -305,7 +306,7 @@ public class PosMain {
     		// products는 제품명을 키로 사용하므로 해당 상품명에 해당하는 재고 목록을 가져옴
     		List<Product> stocks = products.get(productName);
     		if (stocks == null) {
-    			stocks = new ArrayList<>();
+    		    throw new ProductNotFoundException("PRODUCT_NOT_FOUND", productName);
     		}
 
     		// 만료된 재고는 수량 변경
@@ -342,8 +343,7 @@ public class PosMain {
     				System.out.println("거래가 취소되었습니다.");
     				return null;
     			} else {
-    				System.out.println("잘못된 입력입니다. 거래를 취소합니다.");
-    				return null;
+    				throw new PosException("INVALID_INPUT", "잘못된 입력입니다.");
     			}
     		} else {
     			soldMap.put(productName, requestedQuantity);
