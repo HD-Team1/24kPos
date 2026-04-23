@@ -1,12 +1,13 @@
 package Pos.order;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import Pos.product.Product;
 
 import java.time.LocalDateTime;
 
-public class Order {
+public class Order implements Serializable{
 	public int orderId;
 	private Product[] products;
 	private LocalDateTime orderedAt;
@@ -33,5 +34,8 @@ public class Order {
 	}
 	public void setStatus(orderStatus status) {
 		this.status = status;
+	}
+	public int getOrderId() {
+		return this.orderId;
 	}
 }
