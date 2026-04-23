@@ -58,6 +58,31 @@ public class PosMain {
 				.peek(System.out::println)
 				.toArray(Sale[]::new);
 	}
+	
+	
+	
+	public BigDecimal getSalesAmount(int month, int day) {
+		if (month >= 1 && month <= 12 && day == 0) { // 특정 월 조회
+			System.out.printf("=======%d월 판매 총액 조회=======", month);
+			
+			return Arrays.stream(history)
+					.filter(s -> s.soldAt.getMonthValue() == month)
+					.filter(s -> s.getStatus() == Sale.saleStatus.COMPLETED) // 취소된 내역 제외
+					.map(Sale::getTotalPrice)
+					.reduce(BigDecimal.ZERO, BigDecimal::add); // 필터링된 객체들의 totalPrice값 누적
+			
+		} else if (month >= 1 && month <= 12 && day >= 1 && day <= 31) { // 특정 일자 조회
+			System.out.printf("=======%d월 %d일 판매 총액 조회=======", month, day);
+			
+			return Arrays.stream(history)
+					.filter(s -> s.soldAt.getMonthValue() == month && s.soldAt.getDayOfMonth() == day)
+					.filter(s -> s.getStatus() == Sale.saleStatus.COMPLETED) // 취소된 내역 제외
+					.map(Sale::getTotalPrice)
+					.reduce(BigDecimal.ZERO, BigDecimal::add); // 필터링된 객체들의 totalPrice값 누적
+		} else { // 예외
+			return null;
+		}
+	}
 
 	
 	public static void main(String[] args) {
