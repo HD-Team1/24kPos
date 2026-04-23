@@ -1,9 +1,10 @@
 package Pos.product;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class Product {
+public class Product implements Serializable{
 	private long  productId;
 	public String productName;
 	public BigDecimal productPrice;

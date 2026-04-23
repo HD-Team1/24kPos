@@ -1,5 +1,6 @@
 package Pos.order;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -8,16 +9,23 @@ import Pos.product.Product;
 
 import java.time.LocalDateTime;
 
-public class Order {
-	private static final AtomicInteger idGenerator = new AtomicInteger(1);
-	private int orderId;
+public class Order implements Serializable{
+	public int orderId;
 	private Product[] products;
 	private LocalDateTime orderedAt;
 
 	private OrderStatus status;
 	
 	public Order(Product[] products, OrderStatus status) {
-		this.orderId = idGenerator.getAndIncrement();
+		this.orderedAt = LocalDateTime.now();
+		this.orderId = Integer.parseInt(String.format("%02d%02d%03d", 
+					this.orderedAt.getMonthValue(),
+					this.orderedAt.getDayOfMonth(),
+					Math.abs((Integer.toString(this.orderedAt.getHour())
+					+ Integer.toString(this.orderedAt.getMinute())
+					+ Integer.toString(this.orderedAt.getSecond())
+					+ Integer.toString(this.orderedAt.getNano())).hashCode()%100000)
+				));
 		this.products = products;
 		this.status = status;
 		this.orderedAt = LocalDateTime.now(); // 시간도 여기서 초기화
@@ -39,7 +47,7 @@ public class Order {
     }
     
 	public int getOrderId() {
-		return orderId;
+		return this.orderId;
 	}
 	
 }

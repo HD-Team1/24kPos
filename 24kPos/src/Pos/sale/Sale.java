@@ -1,11 +1,12 @@
 package Pos.sale;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import Pos.product.Product;
 
-public class Sale {
+public class Sale implements Serializable{
 	private int saleId;
 	public Product[] products;
 	public LocalDateTime soldAt;
@@ -24,5 +25,8 @@ public class Sale {
 	}
 	public void setStatus(saleStatus status) {
 		this.status = status;
+	}
+	public int getSaleId() {
+		return this.saleId;
 	}
 }
