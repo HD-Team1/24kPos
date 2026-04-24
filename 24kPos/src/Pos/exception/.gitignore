@@ -7,3 +7,6 @@
 /SaleException.class
 /OutOfStockException.class
 /StockException.class
+/InvalidQuantityException.class
+/InvalidOrderException.class
+/InvalidSaleException.class

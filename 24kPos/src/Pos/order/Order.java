@@ -19,14 +19,7 @@ public class Order implements Serializable{
 	
 	public Order(List<Product> products, OrderStatus status) {
 		this.orderedAt = LocalDateTime.now();
-		this.orderId = Integer.parseInt(String.format("%02d%02d%03d", 
-					this.orderedAt.getMonthValue(),
-					this.orderedAt.getDayOfMonth(),
-					Math.abs((Integer.toString(this.orderedAt.getHour())
-					+ Integer.toString(this.orderedAt.getMinute())
-					+ Integer.toString(this.orderedAt.getSecond())
-					+ Integer.toString(this.orderedAt.getNano())).hashCode()%100000)
-				));
+		this.orderId = (int)(System.currentTimeMillis() % 1_000_000_000);
 		this.products = products;
 		this.status = status;
 		this.orderedAt = LocalDateTime.now(); // 시간도 여기서 초기화

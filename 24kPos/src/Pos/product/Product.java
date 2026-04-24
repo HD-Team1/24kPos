@@ -13,14 +13,7 @@ public class Product implements Serializable{
 	
 	
 	public Product(String productName, BigDecimal productPrice, LocalDateTime expiredAt) {
-		this.productId = Integer.parseInt(String.format("%02d%02d%03d", 
-				 LocalDateTime.now().getMonthValue(),
-				 LocalDateTime.now().getDayOfMonth(),
-				Math.abs((Integer.toString(LocalDateTime.now().getHour())
-				+ Integer.toString(LocalDateTime.now().getMinute())
-				+ Integer.toString(LocalDateTime.now().getSecond())
-				+ Integer.toString(LocalDateTime.now().getNano())).hashCode()%100000)
-			));
+		this.productId = (int)(System.currentTimeMillis() % 1_000_000_000);
 	    this.productId = productId;
 	    this.productName = productName;
 	    this.productPrice = productPrice;

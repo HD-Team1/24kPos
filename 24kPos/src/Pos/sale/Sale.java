@@ -27,14 +27,7 @@ public class Sale implements Comparable<Sale>, Serializable {
         this.status = status;
 
         // saleId 생성
-        this.saleId = Integer.parseInt(String.format("%02d%02d%03d",
-                now.getMonthValue(),
-                now.getDayOfMonth(),
-                Math.abs((Integer.toString(now.getHour())
-                        + Integer.toString(now.getMinute())
-                        + Integer.toString(now.getSecond())
-                        + Integer.toString(now.getNano())).hashCode() % 100000)
-        ));
+        this.saleId = (int)(System.currentTimeMillis() % 1_000_000_000);
     }
 	
 	public saleStatus getStatus() {
